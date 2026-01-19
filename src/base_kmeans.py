@@ -27,6 +27,7 @@ class BaseKMeans(ABC):
         self.labels_ = None
         self.inertia_ = None
         self.n_iter_ = 0
+        self.inertia_history = []  # История инерции
         
         if random_state is not None:
             np.random.seed(random_state)
@@ -87,8 +88,8 @@ class BaseKMeans(ABC):
         # 1. Инициализация центроидов
         self.centroids = self._initialize_centroids(X)
         
-        # История инерции для отслеживания сходимости
-        inertia_history = []
+        # Очищаем историю инерции перед началом обучения
+        self.inertia_history = []  # <-- ОЧИЩАЕМ ИСТОРИЮ
         
         for iteration in range(self.max_iter):
             # 2. Вычисление расстояний
@@ -110,7 +111,7 @@ class BaseKMeans(ABC):
             
             # 7. Вычисление инерции
             self.inertia_ = self._compute_inertia(X, labels, self.centroids)
-            inertia_history.append(self.inertia_)
+            self.inertia_history.append(self.inertia_)  # сохраняем в историю
             
             # 8. Вывод информации (можно убрать позже)
             if iteration % 10 == 0:
